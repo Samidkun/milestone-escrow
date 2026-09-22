@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+*.key
+keystore/
+secret*
+out/
+cache/
+broadcast/
+lib/
+node_modules/
