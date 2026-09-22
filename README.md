@@ -41,11 +41,24 @@ forge test --match-contract MilestoneEscrowInvariantTest   # stateful invariants
 bash scripts/rehearse-deploy.sh  # local anvil deploy rehearsal
 ```
 
+## Interactive demo (portfolio)
+An Astro + React console lives in `app/` — a visitor can run the whole lifecycle
+(happy-path / dispute / red-team) with no wallet, watch the invariants hold, and
+see every call revert where access control bites. It is a faithful port of the
+contract, covered by its own tests.
+
+```bash
+cd app && npm install && npm run dev   # http://localhost:4321
+```
+
+![demo](app/docs/preview.png)
+
 ## Layout
 ```
 src/MilestoneEscrow.sol        the contract
 test/                          unit · branches · invariant · redteam
 script/Deploy.s.sol            deploy script
+app/                           Astro + React interactive console (portfolio)
 scripts/rehearse-deploy.sh     E12 rehearsal (anvil)
 docs/THREAT-MODEL.md           threat model (STRIDE + economic)
 docs/SPEC.md                   EARS acceptance criteria

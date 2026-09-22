@@ -1,0 +1,31 @@
+---
+import Layout from "../layouts/Layout.astro";
+import EscrowConsole from "../components/EscrowConsole";
+---
+
+<Layout>
+  <main class="min-h-screen">
+    <div class="border-b border-[#16241f] bg-[#070c10]">
+      <div class="mx-auto max-w-7xl px-4 py-6">
+        <div class="flex flex-wrap items-end gap-x-6 gap-y-2">
+          <h1 class="text-xl font-bold tracking-tight text-[#22e07a] glow">
+            MilestoneEscrow
+          </h1>
+          <p class="text-xs text-[#5b7a6e]">
+            client locks funds up front · freelancer gets paid per approved milestone ·
+            unreleased funds return to the client after the deadline
+          </p>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2 text-[10.5px]">
+          <span class="chip text-[#22e07a]">Solidity 0.8.20</span>
+          <span class="chip text-[#8fd0ff]">Foundry · 29 tests</span>
+          <span class="chip text-[#c084fc]">100% line coverage</span>
+          <span class="chip text-[#f5b544]">Slither: 0 High/Medium</span>
+          <span class="chip text-[#ff5c5c]">red team T1–T3 resisted</span>
+          <span class="chip text-[#5b7a6e]">immutable · no proxy</span>
+        </div>
+      </div>
+    </div>
+    <EscrowConsole client:only="react" />
+  </main>
+</Layout>
