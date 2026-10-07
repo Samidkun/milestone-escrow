@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Projects · MilestoneEscrow</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="topnav" data-od-id="topnav">
+  <div class="container topnav-inner">
+    <a class="brand" href="index.html" aria-label="MilestoneEscrow home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/></svg></span>
+      <span class="brand-name"><b>Milestone</b><span class="brand-alt">Escrow</span></span>
+    </a>
+    <nav aria-label="Primary">
+      <a href="escrow-dashboard.html" aria-current="page">Projects</a>
+      <a href="milestone-release.html?p=EV-2041">Milestones</a>
+      <a href="milestone-release.html?p=EV-2038">Disputes</a>
+      <a href="index.html">Docs</a>
+    </nav>
+    <div class="row" style="gap: 10px">
+      <span class="net-chip"><span class="net-dot" aria-hidden="true"></span>Ethereum mainnet</span>
+      <div class="avatars" aria-label="Signed in as Dana Whitfield">
+        <span class="av av-a">DW</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="content" class="container" style="padding-top: 24px; padding-bottom: 8px">
+
+  <!-- ─── page head ─────────────────────────────────────────────── -->
+  <section data-od-id="page-head" aria-labelledby="ph-title" style="margin-bottom: 20px">
+    <div class="row-between" style="align-items: flex-end; flex-wrap: wrap">
+      <div>
+        <p class="eyebrow" style="margin-bottom: 8px">Cascade Logistics · Workspace</p>
+        <h1 id="ph-title" style="margin-bottom: 8px">Escrow projects</h1>
+        <p class="lead">Funds and milestone state read directly from the escrow contracts. Demo dataset — no live chain connection.</p>
+      </div>
+      <div class="row" style="gap: 8px">
+        <button class="btn btn-secondary" type="button" id="btn-export">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg>
+          Export ledger
+        </button>
+        <button class="btn btn-primary" type="button" id="btn-release">
+          Review releases
+          <span class="num" style="font-size: 12px; opacity: .82" id="release-count">2</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── summary strip ─────────────────────────────────────────── -->
+  <section class="grid-4" data-od-id="summary-strip" aria-label="Portfolio summary" style="margin-bottom: 16px">
+    <div class="kpi" data-od-id="kpi-locked">
+      <span class="kpi-label">Locked in escrow <span class="meta">demo</span></span>
+      <span class="kpi-value is-accent" id="k-locked">—</span>
+      <span class="kpi-foot"><span class="delay-note" id="k-locked-usd">—</span></span>
+      <div class="split-bar" role="img" aria-label="Escrow split by state">
+        <span style="background: var(--st-funded)"   id="bar-funded"></span>
+        <span style="background: var(--st-approved)" id="bar-approved"></span>
+        <span style="background: var(--st-disputed)" id="bar-disputed"></span>
+        <span style="background: var(--st-pending)"  id="bar-pending"></span>
+      </div>
+    </div>
+
+    <div class="kpi" data-od-id="kpi-released">
+      <span class="kpi-label">Released to date</span>
+      <span class="kpi-value" id="k-released">—</span>
+      <span class="kpi-foot"><span class="num" id="k-released-usd">—</span> across <span class="num" id="k-released-n">—</span> milestones</span>
+    </div>
+
+    <div class="kpi" data-od-id="kpi-awaiting">
+      <span class="kpi-label">Awaiting your approval</span>
+      <span class="kpi-value" id="k-awaiting">—</span>
+      <span class="kpi-foot"><span class="num" id="k-awaiting-usd">—</span> claimable now</span>
+    </div>
+
+    <div class="kpi" data-od-id="kpi-progress">
+      <span class="kpi-label">Milestones settled</span>
+      <span class="kpi-value" id="k-progress">—</span>
+      <span class="kpi-foot">
+        <span class="num" id="k-progress-breakdown">—</span>
+      </span>
+      <div class="track" role="progressbar" aria-label="Milestones settled" aria-valuemin="0" aria-valuemax="100" id="k-progress-bar-role">
+        <i class="seg-claimed" id="bar-settled" style="width: 0%"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── project table ─────────────────────────────────────────── -->
+  <section class="panel" data-od-id="project-table" aria-labelledby="pt-title" style="margin-bottom: 24px">
+    <div class="panel-head">
+      <h2 id="pt-title" style="font-family: var(--font-body); font-size: 15px; font-weight: 600">Projects</h2>
+      <div class="legend" aria-label="Milestone state legend">
+        <span><i style="background: var(--st-claimed)"></i>released</span>
+        <span><i style="background: var(--st-approved)"></i>approved</span>
+        <span><i style="background: var(--st-funded)"></i>funded</span>
+        <span><i style="background: var(--st-disputed)"></i>disputed</span>
+        <span><i style="background: var(--st-reclaimed)"></i>reclaimed</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <label class="search">
+        <span class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search projects</span>
+        <span aria-hidden="true" id="search-icon"></span>
+        <input class="input" type="search" id="q" placeholder="Search project, party or contract…" autocomplete="off" />
+      </label>
+
+      <div class="seg" role="group" aria-label="Filter by status" id="status-filter"></div>
+
+      <div class="row" style="gap: 8px; margin-left: auto">
+        <label class="meta" for="sort" style="white-space: nowrap">Sort</label>
+        <select class="select" id="sort">
+          <option value="locked">Escrow locked</option>
+          <option value="progress">Progress</option>
+          <option value="opened">Most recent</option>
+          <option value="value">Contract value</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table class="data">
+        <caption class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Escrow projects with milestone progress and balances</caption>
+        <thead>
+          <tr>
+            <th style="width: 30%">Project</th>
+            <th style="width: 22%">Milestone progress</th>
+            <th class="r" style="width: 13%">In escrow</th>
+            <th class="r" style="width: 13%">Released</th>
+            <th style="width: 12%">Status</th>
+            <th style="width: 10%">Parties</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div id="empty" class="empty" hidden>No projects match this filter.</div>
+  </section>
+
+  <!-- ─── activity + contract register ──────────────────────────── -->
+  <section class="grid-2 split" data-od-id="lower-grid" style="grid-template-columns: 1.35fr 1fr; margin-bottom: 24px">
+    <div class="panel" data-od-id="activity-feed">
+      <div class="panel-head">
+        <h2 style="font-family: var(--font-body); font-size: 15px; font-weight: 600">Recent on-chain activity</h2>
+        <span class="meta">last 90 days</span>
+      </div>
+      <div style="padding: 8px 18px 16px">
+        <div class="feed" id="feed"></div>
+      </div>
+    </div>
+
+    <div class="panel" data-od-id="contract-register">
+      <div class="panel-head">
+        <h2 style="font-family: var(--font-body); font-size: 15px; font-weight: 600">Escrow register</h2>
+        <span class="meta" id="reg-count">—</span>
+      </div>
+      <div style="padding: 16px 18px">
+        <dl class="defs" id="register"></dl>
+        <div class="notice notice-warn" style="margin-top: 16px">
+          <span aria-hidden="true" id="ico-alert"></span>
+          <span><b>1 dispute open.</b> Funds under arbitration are held by the escrow contract until the arbiter signs the split. <a class="btn-link" href="milestone-release.html?p=EV-2038">Open dispute</a></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pagefoot" data-od-id="footer">
+  <div class="container row-between" style="flex-wrap: wrap; gap: 12px">
+    <span>© 2026 MilestoneEscrow · Non-custodial milestone escrow</span>
+    <span class="meta">Demo dataset · not connected to a node · ETH/USD 3,184.20</span>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const el = (t, c, h) => { const n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; };
+
+  /* ── filters live in localStorage across both screens ── */
+  const ui = Object.assign({ status: 'all', sort: 'locked', q: '' }, store.get('dash', {}));
+  const STATES = ['all', 'funded', 'approved', 'claimed', 'disputed', 'reclaimed'];
+
+  /* ── summary strip ── */
+  const escrowSplit = {
+    funded:   ALL.reduce((a, r) => a + r.p.milestones.filter(m => m.state === 'funded').reduce((x, m) => x + m.amount, 0), 0),
+    approved: SUMMARY.claimable,
+    disputed: ALL.reduce((a, r) => a + r.p.milestones.filter(m => m.state === 'disputed').reduce((x, m) => x + m.amount, 0), 0),
+    pending:  ALL.reduce((a, r) => a + r.p.milestones.filter(m => m.state === 'pending').reduce((x, m) => x + m.amount, 0), 0),
+  };
+  const spTotal = Object.values(escrowSplit).reduce((a, b) => a + b, 0) || 1;
+  const pct = v => (v / spTotal * 100).toFixed(2) + '%';
+  $('#bar-funded').style.width   = pct(escrowSplit.funded);
+  $('#bar-approved').style.width = pct(escrowSplit.approved);
+  $('#bar-disputed').style.width = pct(escrowSplit.disputed);
+  $('#bar-pending').style.width  = pct(escrowSplit.pending);
+
+  $('#k-locked').innerHTML      = fmtEth(SUMMARY.locked) + '<span class="kpi-unit">ETH</span>';
+  $('#k-locked-usd').textContent = fmtUsd(SUMMARY.locked * ETH_USD) + ' locked';
+  $('#k-released').innerHTML    = fmtEth(SUMMARY.released) + '<span class="kpi-unit">ETH</span>';
+  $('#k-released-usd').textContent = fmtUsd(SUMMARY.released * ETH_USD);
+  $('#k-released-n').textContent   = ALL.reduce((a, r) => a + r.t.done, 0);
+  $('#k-awaiting').innerHTML    = fmtEth(SUMMARY.claimable) + '<span class="kpi-unit">ETH</span>';
+  $('#k-awaiting-usd').textContent = fmtUsd(SUMMARY.claimable * ETH_USD);
+  $('#k-progress').textContent  = SUMMARY.pct + '%';
+  $('#k-progress-breakdown').textContent = SUMMARY.done + ' of ' + SUMMARY.total + ' milestones settled';
+  $('#bar-settled').style.width = SUMMARY.pct + '%';
+  $('#k-progress-bar-role').setAttribute('aria-valuenow', SUMMARY.pct);
+  $('#k-progress-bar-role').setAttribute('aria-valuetext', SUMMARY.done + ' of ' + SUMMARY.total + ' milestones settled');
+
+  const awaiting = ALL.reduce((a, r) => a + r.p.milestones.filter(m => m.state === 'approved' || (r.t.claimable > 0 && m.state === 'approved')).length, 0);
+  const needsAction = ALL.reduce((a, r) => a + r.p.milestones.filter(m => m.state === 'approved').length, 0);
+  $('#release-count').textContent = needsAction;
+  $('#ico-alert').innerHTML = ICON.alert;
+  $('#search-icon').innerHTML = ICON.search;
+
+  /* ── status filter chips ── */
+  function countFor(s) {
+    if (s === 'all') return ALL.length;
+    return ALL.filter(r => {
+      if (s === 'claimed') return ['claimed', 'released'].includes(r.status);
+      return r.status === s;
+    }).length;
+  }
+  const sf = $('#status-filter');
+  STATES.forEach(s => {
+    const b = el('button', '', (s === 'all' ? 'All' : STATE_LABEL[s] || s) + ' <span class="seg-n">' + countFor(s) + '</span>');
+    b.type = 'button';
+    b.dataset.status = s;
+    b.setAttribute('aria-pressed', String(ui.status === s));
+    b.addEventListener('click', () => { ui.status = s; store.set('dash', ui); paint(); });
+    sf.appendChild(b);
+  });
+
+  /* ── row rendering ── */
+  function rowHtml(r) {
+    const p = r.p, t = r.t;
+    const segs = p.milestones.map(m => {
+      const cls = SEG[m.state];
+      return cls ? '<i class="' + cls + '" style="width:' + (m.amount / t.value * 100).toFixed(3) + '%"></i>' : '';
+    }).join('');
+    const parties = [
+      '<span class="av ' + avClass(p.client) + '" title="Depositor: ' + p.client + '">' + initials(p.client) + '</span>',
+      '<span class="av ' + avClass(p.contractor) + '" title="Beneficiary: ' + p.contractor + '">' + initials(p.contractor) + '</span>',
+    ].join('');
+    const pending = p.milestones.filter(m => m.state === 'pending')
+      .reduce((a, m) => a + m.amount, 0);
+    return '<tr class="is-clickable" data-od-id="project-row-' + p.id + '" tabindex="0" role="link" '
+      + 'data-href="milestone-release.html?p=' + p.id + '" aria-label="Open ' + p.name + '">'
+      + '<td><div class="proj-name">' + p.name + '</div>'
+      +   '<div class="proj-sub">' + p.id + ' · ' + p.contractor + ' → ' + p.client + '</div></td>'
+      + '<td><div class="prog-wrap"><div class="prog-top">'
+      +   '<span class="prog-count">' + t.done + ' / ' + t.total + '</span>'
+      +   '<span class="prog-pct">' + t.pct + '%</span></div>'
+      +   '<div class="track" role="img" aria-label="' + t.done + ' of ' + t.total + ' milestones settled">' + segs + '</div>'
+      + '</div></td>'
+      + '<td class="r num">' + fmtEth(t.inEscrow) + ' ETH'
+      +   (pending ? '<div class="proj-sub">' + fmtEth(pending) + ' unfunded</div>' : '') + '</td>'
+      + '<td class="r num">' + fmtEth(t.released) + ' ETH'
+      +   '<div class="proj-sub">' + fmtUsd(t.released * ETH_USD) + '</div></td>'
+      + '<td><span class="pill pill-' + r.status + '">' + STATE_LABEL[r.status] + '</span>'
+      +   (t.claimable > 0 ? '<div class="proj-sub">' + fmtEth(t.claimable) + ' ETH to release</div>' : '') + '</td>'
+      + '<td><span class="avatars">' + parties + '</span>'
+      +   '<div class="proj-sub" style="font-family:var(--font-mono)">' + short(p.contract) + '</div></td>'
+      + '</tr>';
+  }
+
+  function visible() {
+    const q = ui.q.trim().toLowerCase();
+    let rows = ALL.filter(r => {
+      const p = r.p;
+      if (ui.status !== 'all') {
+        if (ui.status === 'claimed' && !['claimed', 'released'].includes(r.status)) return false;
+        if (ui.status !== 'claimed' && r.status !== ui.status) return false;
+      }
+      if (!q) return true;
+      return (p.name + ' ' + p.client + ' ' + p.contractor + ' ' + p.id + ' ' + p.contract + ' ' + p.network)
+        .toLowerCase().includes(q);
+    });
+    const cmp = {
+      locked:   (a, b) => b.t.inEscrow - a.t.inEscrow,
+      progress: (a, b) => b.t.pct - a.t.pct,
+      opened:   (a, b) => new Date(b.p.opened) - new Date(a.p.opened),
+      value:    (a, b) => b.t.value - a.t.value,
+    }[ui.sort];
+    return rows.sort(cmp);
+  }
+
+  function paint() {
+    const rows = visible();
+    $('#rows').innerHTML = rows.map(rowHtml).join('');
+    $('#empty').hidden = rows.length > 0;
+    document.querySelectorAll('#status-filter button').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.status === ui.status)));
+    $('#sort').value = ui.sort;
+
+    document.querySelectorAll('#rows tr').forEach(tr => {
+      const go = () => { location.href = tr.dataset.href; };
+      tr.addEventListener('click', go);
+      tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+
+    /* visible totals for the current filter, so the strip always reconciles */
+    const sum = k => rows.reduce((a, r) => a + k(r), 0);
+    $('#pt-title').textContent = 'Projects';
+    $('#reg-count').textContent = visible().length + ' of ' + ALL.length;
+  }
+
+  $('#q').value = ui.q;
+  $('#q').addEventListener('input', e => { ui.q = e.target.value; store.set('dash', ui); paint(); });
+  $('#sort').addEventListener('change', e => { ui.sort = e.target.value; store.set('dash', ui); paint(); });
+
+  $('#btn-release').addEventListener('click', () => {
+    location.href = 'milestone-release.html?p=EV-2041';
+  });
+  $('#btn-export').addEventListener('click', e => {
+    const csv = 'project,id,status,escrow_eth,released_eth,milestones_done,milestones_total\n'
+      + visible().map(r => [r.p.name, r.p.id, r.status, r.t.inEscrow.toFixed(2), r.t.released.toFixed(2), r.t.done, r.t.total].join(',')).join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    const a = document.createElement('a');
+    a.href = url; a.download = 'milestone-escrow-ledger.csv'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  /* ── activity feed: merge every project's feed, newest first ── */
+  const feed = PROJECTS.flatMap(p => p.feed.map(f => ({ d: f[0], x: f[1], p })))
+    .sort((a, b) => new Date(b.d) - new Date(a.d)).slice(0, 7);
+  $('#feed').innerHTML = feed.map(f =>
+    '<div class="feed-item"><span class="feed-t" style="padding-left:18px">' + dateFmt(f.d) + '</span>'
+    + '<p class="feed-x">' + f.x
+    + ' <a class="btn-link" href="milestone-release.html?p=' + f.p.id + '">' + f.p.id + '</a></p></div>').join('');
+
+  /* ── escrow register ── */
+  const reg = [
+    ['Contracts', SUMMARY.contracts + ' (demo)'],
+    ['Networks', 'Ethereum · Base · Arbitrum'],
+    ['Escrow token', 'native ETH'],
+    ['Locked value', fmtEth(SUMMARY.locked) + ' ETH'],
+    ['Claimable now', fmtEth(SUMMARY.claimable) + ' ETH'],
+    ['Reclaimed (refunded)', fmtEth(SUMMARY.reclaimed) + ' ETH'],
+    ['Under dispute', fmtEth(escrowSplit.disputed) + ' ETH'],
+    ['Next settlement', 'Jun 14, 2026'],
+  ];
+  $('#register').innerHTML = reg.map(([k, v]) =>
+    '<div class="kv"><dt>' + k + '</dt><dd>' + v + '</dd></div>').join('');
+
+  paint();
+})();
+</script>
+</body>
+</html>
