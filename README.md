@@ -1,5 +1,11 @@
 # MilestoneEscrow 🔒
 
+
+
+<p align="center">
+  <img src="docs/screenshots/preview.png" alt="Application Preview" width="100%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);" />
+</p>
+
 **On-chain milestone escrow for freelance/client work.** A client locks the full
 contract value up front; funds release to the freelancer milestone by milestone as
 each is approved. If the deadline passes with work unreleased, the client reclaims
